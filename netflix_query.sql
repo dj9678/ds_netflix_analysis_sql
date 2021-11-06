@@ -28,12 +28,30 @@ SELECT
 	COUNT(CASE WHEN identifier = 'TV Show' THEN 1 ELSE null END) AS "Total Number of TV Show"
 from netflix_titles;
 
+-- to see unique value in the column
+SELECT DISTINCT country FROM netflix_titles;
 -- check how many unique value is in the column of listed_in
-SELECT DISTINCT COUNT(listed_in) FROM netflix_titles;
+SELECT DISTINCT COUNT(country) FROM netflix_titles;
+-- check how many unique value is in the clumn of rating
+SELECT DISTINCT COUNT(rating) FROM netflix_titles;
 
 -- count number of rows where the column of listed_in contains word "Family"
 SELECT COUNT(*) 
 FROM netflix_titles
 WHERE listed_in LIKE '%Family%';
 
+-- check top 5 director who have the most of his/her movie or tv shows in Netflix
+SELECT director, COUNT(director) AS "value_occurrence"
+FROM netflix_titles
+GROUP BY director ORDER BY "value_occurrence" DESC
+LIMIT 5;
+-- check what rating is most popular in Netflix
+SELECT rating, COUNT(rating) AS "rating_order"
+FROM netflix_titles
+GROUP BY rating ORDER BY "rating_order" DESC;
+-- check what genre is most popular in Netflix
+SELECT listed_in, COUNT(listed_in) AS "listed_in_order"
+FROM netflix_titles
+GROUP BY listed_in ORDER BY "listed_in_order" DESC;
 
+-- check which country update the most content on 2021
