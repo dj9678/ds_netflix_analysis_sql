@@ -54,4 +54,21 @@ SELECT listed_in, COUNT(listed_in) AS "listed_in_order"
 FROM netflix_titles
 GROUP BY listed_in ORDER BY "listed_in_order" DESC;
 
--- check which country update the most content on 2021
+-- check what is the top 5 countries that release the most content on 2021
+SELECT country, COUNT(release_year) AS release_2021
+FROM netflix_titles
+WHERE release_year = 2021
+GROUP BY country ORDER BY release_2021 DESC
+LIMIT 5;
+
+-- top 10 countries on different release_year (Care for the country rank since it is not sorted for release_2020 and release_2020)
+SELECT 
+	country, 
+	COUNT(CASE WHEN release_year = 2021 THEN 1 ELSE null END) AS release_2021,
+	COUNT(CASE WHEN release_year = 2020 THEN 1 ELSE null END) AS release_2020,
+	COUNT(CASE WHEN release_year = 2019 THEN 1 ELSE null END) AS release_2019
+FROM netflix_titles
+GROUP BY country ORDER BY release_2021 DESC
+LIMIT 10;
+
+
