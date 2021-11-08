@@ -61,7 +61,12 @@ WHERE release_year = 2021
 GROUP BY country ORDER BY release_2021 DESC
 LIMIT 5;
 
--- top 10 countries on different release_year (Care for the country rank since it is not sorted for release_2020 and release_2020)
+-- chwxk how many null is in the country column
+SELECT COUNT(*)
+FROM netflix_titles
+WHERE country is NULL
+
+-- top 10 countries on different release_year (be careful for the country rank since it is not sorted for the columns of release_2020 and release_2020)
 SELECT 
 	country, 
 	COUNT(CASE WHEN release_year = 2021 THEN 1 ELSE null END) AS release_2021,
@@ -71,4 +76,55 @@ FROM netflix_titles
 GROUP BY country ORDER BY release_2021 DESC
 LIMIT 10;
 
+-- movie and tv show added on each months
+SELECT 
+	DATE_TRUNC('month',date_added) AS added_month,
+	identifier, COUNT(*) as added_count
+FROM netflix_titles 
+GROUP BY 1,2 ORDER BY 1;
 
+-- most popular genre added by country during April, 2021
+SELECT 
+	date_added,
+	country,
+	listed_in, 
+	COUNT(listed_in) AS genre_count
+FROM netflix_titles
+WHERE date_added BETWEEN '2021-04-01' AND '2021-04-30'
+GROUP BY 1,2,3 ORDER BY 4 DESC
+
+-- check which country add same genre more than 5
+SELECT 
+	date_added,
+	country,
+	listed_in, 
+	COUNT(listed_in) AS genre_count
+FROM netflix_titles
+GROUP BY 1,2,3 
+HAVING COUNT(*) > 5
+ORDER BY 4 DESC
+
+-- check how many tv show or movie added by date_added using with function
+WITH events AS (
+	SELECT 
+		date_added,
+		country,
+		identifier, 
+		COUNT(identifier) AS identifier_count
+	FROM netflix_titles
+	GROUP BY 1,2,3)
+
+SELECT 
+	country, 
+	DATE_TRUNC('month', date_added) AS added_month,
+	identifier, SUM(identifier_count)
+FROM events
+WHERE country = 'South Korea' 
+GROUP BY 1,2,3  ORDER BY 2 DESC
+
+-- count identifier over date_added using window function
+SELECT 
+	date_added,
+	country,
+	identifier, COUNT(identifier) OVER (ORDER BY date_added) AS identifier_count
+FROM netflix_titles
