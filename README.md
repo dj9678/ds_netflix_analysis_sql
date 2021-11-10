@@ -10,4 +10,4 @@ This repo is aiming to explore the [Netflix Movies and TV Shows](https://www.kag
 
 ## How to Run
 
-Simply click `netflix_analysis.sql` on main page of this repo
+Simply click `netflix_query.sql` on main page of this repo
