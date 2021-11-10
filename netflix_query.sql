@@ -61,7 +61,7 @@ WHERE release_year = 2021
 GROUP BY country ORDER BY release_2021 DESC
 LIMIT 5;
 
--- chwxk how many null is in the country column
+-- check how many null is in the country column
 SELECT COUNT(*)
 FROM netflix_titles
 WHERE country is NULL;
