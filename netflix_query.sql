@@ -64,7 +64,7 @@ LIMIT 5;
 -- chwxk how many null is in the country column
 SELECT COUNT(*)
 FROM netflix_titles
-WHERE country is NULL
+WHERE country is NULL;
 
 -- top 10 countries on different release_year (be careful for the country rank since it is not sorted for the columns of release_2020 and release_2020)
 SELECT 
@@ -91,7 +91,7 @@ SELECT
 	COUNT(listed_in) AS genre_count
 FROM netflix_titles
 WHERE date_added BETWEEN '2021-04-01' AND '2021-04-30'
-GROUP BY 1,2,3 ORDER BY 4 DESC
+GROUP BY 1,2,3 ORDER BY 4 DESC;
 
 -- check which country add same genre more than 5
 SELECT 
@@ -102,7 +102,7 @@ SELECT
 FROM netflix_titles
 GROUP BY 1,2,3 
 HAVING COUNT(*) > 5
-ORDER BY 4 DESC
+ORDER BY 4 DESC;
 
 -- check how many tv show or movie added by date_added using with function
 WITH events AS (
@@ -112,7 +112,7 @@ WITH events AS (
 		identifier, 
 		COUNT(identifier) AS identifier_count
 	FROM netflix_titles
-	GROUP BY 1,2,3)
+	GROUP BY 1,2,3);
 
 SELECT 
 	country, 
@@ -120,11 +120,32 @@ SELECT
 	identifier, SUM(identifier_count)
 FROM events
 WHERE country = 'South Korea' 
-GROUP BY 1,2,3  ORDER BY 2 DESC
+GROUP BY 1,2,3  ORDER BY 2 DESC;
 
 -- count identifier over date_added using window function
 SELECT 
 	date_added,
 	country,
 	identifier, COUNT(identifier) OVER (ORDER BY date_added) AS identifier_count
-FROM netflix_titles
+FROM netflix_titles;
+
+-- count number of added 'TV Show' in United States with yearly difference(lead_difference) and sum of count(identifier_sum)  
+SELECT date_added,
+       country,
+	   identifier,
+	   LEAD(identifier_count) OVER (ORDER BY date_added) AS lead,
+	   identifier_count,
+	   LEAD(identifier_count) OVER (ORDER BY date_added) - identifier_count AS lead_difference,
+       identifier_sum
+FROM (
+	SELECT 
+		date_added,
+		country,
+		identifier,
+		COUNT(identifier) AS identifier_count,
+		SUM(COUNT(identifier)) OVER (PARTITION BY identifier ORDER BY date_added) AS identifier_sum
+	FROM netflix_titles 
+	WHERE country = 'United States'
+	GROUP BY 1,2,3
+	HAVING identifier='TV Show'
+) sub
