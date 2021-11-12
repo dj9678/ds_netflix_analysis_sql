@@ -48,11 +48,13 @@ LIMIT 5;
 -- check what rating is most popular in Netflix
 SELECT rating, COUNT(rating) AS "rating_order"
 FROM netflix_titles
-GROUP BY rating ORDER BY "rating_order" DESC;
+GROUP BY rating ORDER BY "rating_order" DESC 
+LIMIT 10;
 -- check what genre is most popular in Netflix
 SELECT listed_in, COUNT(listed_in) AS "listed_in_order"
 FROM netflix_titles
-GROUP BY listed_in ORDER BY "listed_in_order" DESC;
+GROUP BY listed_in ORDER BY "listed_in_order" DESC
+LIMIT 10;
 
 -- check what is the top 5 countries that release the most content on 2021
 SELECT country, COUNT(release_year) AS release_2021
@@ -61,12 +63,25 @@ WHERE release_year = 2021
 GROUP BY country ORDER BY release_2021 DESC
 LIMIT 5;
 
+-- number of contents added in United States and South Korea using Union
+	SELECT country, date_added, COUNT(date_added) AS added_date
+	FROM netflix_titles
+	WHERE country = 'United States' 
+	GROUP BY 1, 2 
+UNION
+	SELECT country, date_added, COUNT(date_added) AS added_date
+	FROM netflix_titles	
+	WHERE country = 'South Korea' 
+	GROUP BY 1, 2 
+ORDER BY country, date_added
+
 -- check how many null is in the country column
 SELECT COUNT(*)
 FROM netflix_titles
 WHERE country is NULL;
 
--- top 10 countries on different release_year (be careful for the country rank since it is not sorted for the columns of release_2020 and release_2020)
+-- countries having most contents released on year of 2019, 2020, 2021
+-- (be careful for the country rank since it is not sorted for the columns of release_2020 and release_2020)
 SELECT 
 	country, 
 	COUNT(CASE WHEN release_year = 2021 THEN 1 ELSE null END) AS release_2021,
@@ -102,9 +117,9 @@ SELECT
 FROM netflix_titles
 GROUP BY 1,2,3 
 HAVING COUNT(*) > 5
-ORDER BY 4 DESC;
+ORDER BY 4 DESC
 
--- check how many tv show or movie added by date_added using with function
+-- check how many tv show or movie added in South Korea with date_added using with function
 WITH events AS (
 	SELECT 
 		date_added,
